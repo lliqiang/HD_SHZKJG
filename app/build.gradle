@@ -1,0 +1,87 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'//扩展插件
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.3"
+    defaultConfig {
+        applicationId "com.hengda.shzkjg.m"
+        minSdkVersion 18
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        configurations.all {
+
+            resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+                def requested = details.requested
+                if (requested.group == 'com.android.support') {
+                    if (!requested.name.startsWith("multidex")) {
+                        details.useVersion '25.3.0'//默认使用的版本
+                    }
+                }
+            }
+        }
+        ndk {
+            // 设置支持的SO库架构
+            abiFilters 'armeabi' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile "org.jetbrains.anko:anko-commons:$anko_version"
+    compile "org.jetbrains.anko:anko-sqlite:$anko_version"
+    //    compile 'com.github.LRH1993:AutoFlowLayout:1.0.5'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'io.reactivex:rxjava:1.2.1'
+    compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'com.squareup.retrofit2:retrofit:latest.release'
+    compile 'com.squareup.retrofit2:converter-gson:latest.release'
+    compile 'com.squareup.retrofit2:retrofit-adapters:2.1.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+    compile 'com.hengda.frame.tileview:library:0.1.9'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.github.Othershe:NiceDialog:1.1.0'
+    compile 'com.hengda.frame.numreceiver:library:0.0.7'
+    compile 'com.github.bumptech.glide:glide:3.5.2'
+    compile 'com.hengda.frame.hdplayer:library:1.0.0'
+    compile 'com.hengda.zwf:HdQrcode:0.0.1'
+    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.21'
+//    compile 'com.hengda.frame.update:library:0.0.6'
+    compile 'zlc.season:rxdownload:1.2.8'
+    compile 'ch.halcyon:squareprogressbar:1.6.2'
+    compile 'com.github.LRH1993:AutoFlowLayout:1.0.5'
+//    compile 'com.arialyy.aria:aria-core:3.2.15'
+//    annotationProcessor 'com.arialyy.aria:aria-compiler:3.2.15'
+//    compile 'com.arialyy.frame:MVVM2:2.2.0'
+    testCompile 'junit:junit:4.12'
+    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.liulishuo.filedownloader:library:1.2.2'
+    compile 'cn.pedant.sweetalert:library:1.3'
+    compile 'com.nex3z:flow-layout:0.1.4'
+    compile 'com.jakewharton.rxbinding:rxbinding:0.4.0'
+    compile 'com.jaeger.statusbaruitl:library:1.3.6'
+    //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.2'
+    compile 'com.tencent.bugly:crashreport:latest.release' //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9
+    compile 'com.tencent.bugly:nativecrashreport:latest.release'
+    //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.2'
+}
+repositories {
+    mavenCentral()
+}

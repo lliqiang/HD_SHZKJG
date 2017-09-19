@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#66B8EE</color>
+    <color name="colorPrimaryDark">#66B8EE</color>
+    <color name="colorAccent">#66B8EE</color>
+    <color name="white">#FFF</color>
+    <color name="black">#000</color>
+    <color name="grey">#CCCCCC</color>
+    <color name="blue">#3C8DC4</color>
+    <color name="blue1">#66B8EE</color>
+    <color name="white_set">#EFEFEF</color>
+    <color name="seekbar_color">#bbbbbb</color>
+    <color name="texttip">#4A9385</color>
+
+</resources>

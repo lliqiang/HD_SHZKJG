@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_close_dialog_route"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:paddingRight="40dp"
+            android:src="@mipmap/img_close_dilog" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/iv_close_dialog_route"
+            android:layout_centerInParent="true"
+            android:background="@mipmap/bg_dialog_switch"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:drawableLeft="@mipmap/img_line"
+                android:drawablePadding="8dp"
+                android:drawableRight="@mipmap/img_line"
+                android:text="路线选择"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+            <RadioGroup
+                android:id="@+id/rp_route"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:orientation="vertical">
+                <RadioButton
+                    android:id="@+id/rb_route_all"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/select_switch_bg"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:text="全部路线"
+                    android:textColor="@color/black"
+                    android:textSize="19sp" />
+                <RadioButton
+                    android:id="@+id/rb_route_classics"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/select_switch_bg"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:text="经典路线"
+                    android:textColor="@color/black"
+                    android:textSize="19sp" />
+            </RadioGroup>
+        </LinearLayout>
+
+    </RelativeLayout>
+</LinearLayout>

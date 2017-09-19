@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/menu_group"
+        >
+        <item
+            android:id="@+id/map_guide_menu"
+            android:checked="true"
+            android:icon="@mipmap/img_socket"
+            android:title="地图导览" />
+        <item
+            android:id="@+id/list_guide_menu"
+            android:checked="true"
+            android:icon="@mipmap/img_socket"
+            android:title="列表导览" />
+        <item
+            android:id="@+id/introduce_menu"
+            android:checked="true"
+            android:icon="@mipmap/img_socket"
+            android:title="科技馆简介" />
+        <item
+            android:id="@+id/about_menu"
+            android:checked="true"
+            android:icon="@mipmap/img_socket"
+            android:title="关于科技馆" />
+
+    </group>
+
+</menu>

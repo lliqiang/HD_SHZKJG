@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/outer"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="16dip">
+
+    <LinearLayout
+        android:id="@+id/rootPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/default_progress_dialog_bg"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dip">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="72dip"
+                android:layout_height="72dip"
+                android:contentDescription="@null"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="0kb/s"
+                android:textColor="#0f0"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="72dip"
+            android:layout_height="72dip"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dip"
+            android:text="@string/downloading"
+            android:textColor="#f56"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/cancle"
+            android:layout_width="match_parent"
+            android:layout_height="32dip"
+            android:layout_margin="16dip"
+            android:background="@drawable/shape_corners_btn_style"
+            android:text="取消下载"
+            android:textAppearance="@style/TextAppearance.AppCompat.Button"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+</RelativeLayout>
