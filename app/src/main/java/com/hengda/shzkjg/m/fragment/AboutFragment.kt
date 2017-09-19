@@ -28,7 +28,6 @@ class AboutFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
         val view: View = inflater!!.inflate(R.layout.fragment_about, container, false)
         var webAbout = view.find<WebView>(R.id.web_about)
         webAbout.setBackgroundResource(0)
