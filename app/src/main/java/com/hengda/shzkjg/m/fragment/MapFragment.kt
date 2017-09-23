@@ -72,11 +72,12 @@ class MapFragment : Fragment(), AnkoLogger, NumManager.OnNumChangeListener {
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-
-        if (route == 0) {
-            Glide.with(activity).load(AppConfig.getMapPath(floor) + "/" + "route_one.png").into(imgRoute)
-        } else {
-            Glide.with(activity).load(AppConfig.getMapPath(floor) + "/" + "route_two.png").into(imgRoute)
+        if (type == 0) {
+            if (route == 0) {
+                Glide.with(activity).load(AppConfig.getMapPath(floor) + "/" + "route_one.png").into(imgRoute)
+            } else {
+                Glide.with(activity).load(AppConfig.getMapPath(floor) + "/" + "route_two.png").into(imgRoute)
+            }
         }
         loadData()
         initTileView()
@@ -92,10 +93,8 @@ class MapFragment : Fragment(), AnkoLogger, NumManager.OnNumChangeListener {
         AppConfig.database.use {
             if (route == 0) {
                 exhibitList = select("MUSEUM_EXHIBIT").whereSimple("isClassics=0 AND MapId=? AND IsExhibit=?", floor.toString(), type.toString()).parseList { Exhibit(it as MutableMap<String, Any?>) }
-                exhibitList!!.forEach { info { "route=0-------${it.FileNo}" } }
             } else {
                 exhibitList = select("MUSEUM_EXHIBIT").whereSimple("isClassics=1 AND MapId=? AND IsExhibit=?", floor.toString(), type.toString()).parseList { Exhibit(it as MutableMap<String, Any?>) }
-                exhibitList!!.forEach { info { "route=1-------${it.FileNo}" } }
             }
         }
     }
@@ -105,7 +104,8 @@ class MapFragment : Fragment(), AnkoLogger, NumManager.OnNumChangeListener {
         path = AppConfig.getMapPath(floor)
         tileView!!.init(4.0f, 0.5f, mapList.get(0).Width, mapList.get(0).Height, path)
         tileView!!.loadMapFromDisk()
-        tileView!!.setMinimumScaleFullScreen()
+//        tileView!!.setMinimumScaleFullScreen()
+        tileView!!.scale=1.5f
         tileView!!.addSample(path + "/img.png", false)
         if (imgRoute.parent != null) {
             (imgRoute.parent as ViewGroup).removeView(imgRoute)

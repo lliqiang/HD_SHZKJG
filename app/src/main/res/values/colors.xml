@@ -11,5 +11,6 @@
     <color name="white_set">#EFEFEF</color>
     <color name="seekbar_color">#bbbbbb</color>
     <color name="texttip">#4A9385</color>
+    <color name="scanLine">#FF984d2f</color>
 
 </resources>

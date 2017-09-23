@@ -1,0 +1,33 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/bg_common"
+    android:orientation="vertical"
+    tools:context="com.hengda.shzkjg.m.fragment.ScrollFragment">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@mipmap/icon_logo_scroll" />
+
+    <com.yarolegovich.discretescrollview.DiscreteScrollView
+        android:id="@+id/rw_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="30dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:overScrollMode="always" />
+
+    <TextView
+        android:id="@+id/tv_currentNo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="20dp"
+        android:text="1/12"
+        android:gravity="center"
+        android:textColor="@color/white" />
+</LinearLayout>

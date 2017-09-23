@@ -35,8 +35,11 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
     lateinit var tipView: View
     lateinit var tvTip: TextView
     val inroFrg: IntroFragment = IntroFragment.newInstance()
+    val scanFrg: ScanFragment = ScanFragment.newInstance()
+    val callFrg: CallFragment = CallFragment.newInstance()
     val mapFrg: MapFragment = MapFragment.newInstance(1, 0, 0)
     val listFrg: ListFragment = ListFragment.newInstance()
+    val scrolltFrg: ScrollFragment = ScrollFragment.newInstance()
     val aboutFrg: AboutFragment = AboutFragment.newInstance()
     val settingFrg: SettingFragment = SettingFragment.newInstance()
     var dialog: NiceDialog = NiceDialog.init()
@@ -64,8 +67,16 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
         //查询展厅和展品
         AppConfig.database.use {
             mapList = select("MAP_INFO").parseList { MapInfo(it as MutableMap<String, Any?>) }
-            setTip()
         }
+        AppConfig.CONSTANT = 0
+        tv_search.visibility = View.VISIBLE
+        tv_common_title.visibility = View.GONE
+        ll_swipe.visibility = View.GONE
+        tv_search.visibility = View.GONE
+        iv_search_common.visibility = View.VISIBLE
+        draw_layout.closeDrawers()
+        showSocket(iv_socket_list)
+        supportFragmentManager.beginTransaction().replace(R.id.container_main,scrolltFrg).commitAllowingStateLoss()
     }
 
     private fun initTip() {
@@ -114,36 +125,35 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
                                 when (checkedId) {
 
                                     R.id.rb_floor_one -> {
-
+                                        iv_switch_floor.setImageResource(R.mipmap.img_floor_one)
                                         AppConfig.CONSTANT = 1
                                         val mapFrg: MapFragment = MapFragment.newInstance(1, type, route)
                                         floor = 1
                                         holder.convertView.find<RadioButton>(R.id.rb_floor_one).setTextColor(resources.getColor(R.color.white))
                                         holder.convertView.find<RadioButton>(R.id.rb_floor_two).setTextColor(resources.getColor(R.color.black))
                                         holder.convertView.find<RadioButton>(R.id.rb_floor_three).setTextColor(resources.getColor(R.color.black))
-                                        setTip()
                                         supportFragmentManager.beginTransaction().replace(R.id.container_main, mapFrg).commit()
 
                                     }
 
                                     R.id.rb_floor_two -> {
+                                        iv_switch_floor.setImageResource(R.mipmap.img_floor_two)
                                         AppConfig.CONSTANT = 1
                                         floor = 2
                                         holder.convertView.find<RadioButton>(R.id.rb_floor_one).setTextColor(resources.getColor(R.color.black))
                                         holder.convertView.find<RadioButton>(R.id.rb_floor_two).setTextColor(resources.getColor(R.color.white))
                                         holder.convertView.find<RadioButton>(R.id.rb_floor_three).setTextColor(resources.getColor(R.color.black))
-                                        setTip()
                                         val mapFrg: MapFragment = MapFragment.newInstance(2, type, route)
                                         supportFragmentManager.beginTransaction().replace(R.id.container_main, mapFrg).commit()
 
                                     }
                                     R.id.rb_floor_three -> {
+                                        iv_switch_floor.setImageResource(R.mipmap.img_floor_three)
                                         AppConfig.CONSTANT = 1
                                         floor = 3
                                         holder.convertView.find<RadioButton>(R.id.rb_floor_one).setTextColor(resources.getColor(R.color.black))
                                         holder.convertView.find<RadioButton>(R.id.rb_floor_two).setTextColor(resources.getColor(R.color.black))
                                         holder.convertView.find<RadioButton>(R.id.rb_floor_three).setTextColor(resources.getColor(R.color.white))
-                                        setTip()
                                         val mapFrg: MapFragment = MapFragment.newInstance(3, type, route)
                                         supportFragmentManager.beginTransaction().replace(R.id.container_main, mapFrg).commit()
                                     }
@@ -165,9 +175,7 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
                     .show(supportFragmentManager)
 
         }
-        iv_clear_tip.setOnClickListener {
-            rl_tip.visibility = View.GONE
-        }
+
 
         iv_route.setOnClickListener {
             var dialog1: NiceDialog = NiceDialog.init()
@@ -230,7 +238,7 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
         tv_slide_map_guide.setOnClickListener {
             AppConfig.CONSTANT = 1
             AppConfig.TYPECONFIG = 1
-            rl_tip.visibility = View.VISIBLE
+
             supportFragmentManager.beginTransaction().replace(R.id.container_main, mapFrg).commit()
             draw_layout.closeDrawers()
             tv_search.visibility = View.VISIBLE
@@ -240,21 +248,21 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
             showSocket(iv_socket_map)
         }
         tv_slide_list_guide.setOnClickListener {
-
             AppConfig.CONSTANT = 0
-            rl_tip.visibility = View.GONE
-            supportFragmentManager.beginTransaction().replace(R.id.container_main, listFrg).commit()
+            supportFragmentManager.beginTransaction().replace(R.id.container_main, scrolltFrg).commit()
             tv_search.visibility = View.VISIBLE
             tv_common_title.visibility = View.GONE
             ll_swipe.visibility = View.GONE
+            tv_search.visibility = View.GONE
+            iv_search_common.visibility = View.VISIBLE
             draw_layout.closeDrawers()
             showSocket(iv_socket_list)
         }
         tv_slide_intro.setOnClickListener {
             AppConfig.CONSTANT = 0
-            rl_tip.visibility = View.GONE
             supportFragmentManager.beginTransaction().replace(R.id.container_main, inroFrg).commit()
             tv_search.visibility = View.GONE
+            iv_search_common.visibility = View.GONE
             tv_common_title.visibility = View.VISIBLE
             ll_swipe.visibility = View.GONE
             tv_common_title.text = "科技馆简介"
@@ -263,24 +271,50 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
         }
         tv_slide_about.setOnClickListener {
             AppConfig.CONSTANT = 0
-            rl_tip.visibility = View.GONE
             supportFragmentManager.beginTransaction().replace(R.id.container_main, aboutFrg).commit()
             draw_layout.closeDrawers()
             tv_search.visibility = View.GONE
             tv_common_title.visibility = View.VISIBLE
             ll_swipe.visibility = View.GONE
+            iv_search_common.visibility = View.GONE
             tv_common_title.text = "关于科技馆"
             showSocket(iv_socket_about)
         }
-        tv_setting.setOnClickListener {
+        tv_slide_scan_guide.setOnClickListener {
             AppConfig.CONSTANT = 0
-            rl_tip.visibility = View.GONE
-            supportFragmentManager.beginTransaction().replace(R.id.container_main, settingFrg).commit()
-            draw_layout.closeDrawers()
+            supportFragmentManager.beginTransaction().replace(R.id.container_main, scanFrg).commit()
             tv_search.visibility = View.GONE
             tv_common_title.visibility = View.VISIBLE
             ll_swipe.visibility = View.GONE
+            tv_common_title.text = "二维码扫描"
+            iv_search_common.visibility = View.GONE
+            draw_layout.closeDrawers()
+            showSocket(iv_socket_scan)
+        }
+        tv_slide_call.setOnClickListener {
+            AppConfig.CONSTANT = 0
+            supportFragmentManager.beginTransaction().replace(R.id.container_main, callFrg).commit()
+            tv_search.visibility = View.GONE
+            tv_common_title.visibility = View.VISIBLE
+            ll_swipe.visibility = View.GONE
+            tv_common_title.text = "联系我们"
+            iv_search_common.visibility = View.GONE
+            draw_layout.closeDrawers()
+            showSocket(iv_socket_call)
+        }
+
+        tv_setting.setOnClickListener {
+            AppConfig.CONSTANT = 0
+            supportFragmentManager.beginTransaction().replace(R.id.container_main, settingFrg).commit()
+            draw_layout.closeDrawers()
+            tv_search.visibility = View.GONE
+            iv_search_common.visibility = View.GONE
+            tv_common_title.visibility = View.VISIBLE
+            ll_swipe.visibility = View.GONE
             tv_common_title.text = "设置"
+        }
+        iv_search_common.setOnClickListener {
+            startActivity<SearchActivity>()
         }
     }
 
@@ -312,24 +346,49 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
                 iv_socket_about.visibility = View.INVISIBLE
                 iv_socket_intro.visibility = View.INVISIBLE
                 iv_socket_list.visibility = View.INVISIBLE
+                iv_socket_call.visibility = View.INVISIBLE
+                iv_socket_scan.visibility = View.INVISIBLE
+
             }
             iv_socket_about -> {
                 iv_socket_map.visibility = View.INVISIBLE
                 iv_socket_about.visibility = View.VISIBLE
                 iv_socket_intro.visibility = View.INVISIBLE
                 iv_socket_list.visibility = View.INVISIBLE
+                iv_socket_call.visibility = View.INVISIBLE
+                iv_socket_scan.visibility = View.INVISIBLE
             }
             iv_socket_intro -> {
                 iv_socket_map.visibility = View.INVISIBLE
                 iv_socket_about.visibility = View.INVISIBLE
                 iv_socket_intro.visibility = View.VISIBLE
                 iv_socket_list.visibility = View.INVISIBLE
+                iv_socket_call.visibility = View.INVISIBLE
+                iv_socket_scan.visibility = View.INVISIBLE
             }
             iv_socket_list -> {
                 iv_socket_map.visibility = View.INVISIBLE
                 iv_socket_about.visibility = View.INVISIBLE
                 iv_socket_intro.visibility = View.INVISIBLE
                 iv_socket_list.visibility = View.VISIBLE
+                iv_socket_call.visibility = View.INVISIBLE
+                iv_socket_scan.visibility = View.INVISIBLE
+            }
+            iv_socket_scan -> {
+                iv_socket_map.visibility = View.INVISIBLE
+                iv_socket_about.visibility = View.INVISIBLE
+                iv_socket_intro.visibility = View.INVISIBLE
+                iv_socket_list.visibility = View.INVISIBLE
+                iv_socket_call.visibility = View.INVISIBLE
+                iv_socket_scan.visibility = View.VISIBLE
+            }
+            iv_socket_call -> {
+                iv_socket_map.visibility = View.INVISIBLE
+                iv_socket_about.visibility = View.INVISIBLE
+                iv_socket_intro.visibility = View.INVISIBLE
+                iv_socket_list.visibility = View.INVISIBLE
+                iv_socket_call.visibility = View.VISIBLE
+                iv_socket_scan.visibility = View.INVISIBLE
             }
         }
     }
@@ -377,7 +436,6 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
                                                 iv_common_device.visibility = View.VISIBLE
                                                 supportFragmentManager.beginTransaction().replace(R.id.container_main, mapFrg).commitAllowingStateLoss()
                                                 p1!!.dismiss()
-                                                setTip()
                                             }
                                         }
                                     }).setDimAmount(0.3f)
@@ -397,6 +455,7 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
             toast("再次点击退出应用")
             lastTime = System.currentTimeMillis()
         } else {
+            AppConfig.CONSTANT = 0
             finish()
         }
     }
@@ -430,10 +489,6 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
         NumManager.unregisterNumChangeListener(this);
     }
 
-    fun setTip() {
-        rl_tip.visibility = View.VISIBLE
-        tv_tip_floor.text = "${floor}F:共有${mapList[floor - 1].ExhibitionNo}个展厅，${mapList[floor - 1].ExhibitNo}个展项"
-    }
 
 }
 

@@ -29,7 +29,7 @@ open class AppConfig {
         const val TEXTTEXT_SSID = "GLBWG"
         var ISPLAY:Boolean=false
         var ISHOME:Boolean=false
-        var CONSTANT = 1
+        var CONSTANT = 0
         var TYPECONFIG=1
         //    馆方内网-默认网络请求服务器地址
         const val DEFAULT_IP_PORT_I = "192.168.16.30/12345"
