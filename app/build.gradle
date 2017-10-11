@@ -2,6 +2,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'//扩展插件
 android {
+    signingConfigs {
+        config {
+            keyAlias 'android'
+            keyPassword 'android'
+            storeFile file('E:/恒达/hengda.jks')
+            storePassword 'android'
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
     defaultConfig {
@@ -12,6 +20,7 @@ android {
         versionName "1.0"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        resValue "string", "hdupdater_file_authorities", "com.hengda.shzkjg.m.hdupdate.fileprovider"
         configurations.all {
 
             resolutionStrategy.eachDependency { DependencyResolveDetails details ->
@@ -32,9 +41,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable true
+            jniDebuggable true
+            signingConfig signingConfigs.config
         }
     }
-
 }
 
 dependencies {
@@ -62,13 +73,14 @@ dependencies {
     compile 'com.hengda.frame.hdplayer:library:1.0.0'
     compile 'com.hengda.zwf:HdQrcode:0.0.1'
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.21'
-//    compile 'com.hengda.frame.update:library:0.0.6'
+    compile 'com.hengda.frame.update:library:1.0.0'
+    //检查更新
     compile 'zlc.season:rxdownload:1.2.8'
     compile 'ch.halcyon:squareprogressbar:1.6.2'
     compile 'com.github.LRH1993:AutoFlowLayout:1.0.5'
-//    compile 'com.arialyy.aria:aria-core:3.2.15'
-//    annotationProcessor 'com.arialyy.aria:aria-compiler:3.2.15'
-//    compile 'com.arialyy.frame:MVVM2:2.2.0'
+    //    compile 'com.arialyy.aria:aria-core:3.2.15'
+    //    annotationProcessor 'com.arialyy.aria:aria-compiler:3.2.15'
+    //    compile 'com.arialyy.frame:MVVM2:2.2.0'
     testCompile 'junit:junit:4.12'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.android.support:multidex:1.0.1'

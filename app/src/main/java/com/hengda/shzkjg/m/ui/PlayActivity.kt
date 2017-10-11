@@ -62,7 +62,7 @@ class PlayActivity : BasePlayerActivity(), AnkoLogger {
             val whereArgs = arrayOf(exhibit.FileNo)//
             update("MUSEUM_EXHIBIT", values, whereClause, whereArgs)
         }
-        Glide.with(this).load(AppConfig.getImgPath(exhibit.FileNo)).placeholder(R.mipmap.img_play_default).into(iv_play_detail)
+        Glide.with(this).load(AppConfig.getImgPath(exhibit.FileNo)).placeholder(R.mipmap.img_list_def).into(iv_play_detail)
         iv_back.setOnClickListener {
             AppConfig.ISPLAY = false
             finish()
@@ -129,6 +129,7 @@ class PlayActivity : BasePlayerActivity(), AnkoLogger {
 
             } else if (action == MusicService.STATE_COMPLETED) {
                 iv_play.setImageResource(R.mipmap.img_play)
+                tv_endTime.setText(ControllerUtil.stringForTime(0))
                 HDExoPlayer.prepare(MusicTrack(exhibit.ExhibitId, exhibit.Name, voicePath, R.drawable.def_placeholder), false)
             } else if (action == MusicService.TOGGLEPAUSE_ACTION) {
                 if (!HDExoPlayer.isPlaying()) {
@@ -152,7 +153,8 @@ class PlayActivity : BasePlayerActivity(), AnkoLogger {
     }
 
     private fun initControl() {
-        seekBar.setMax(ControllerUtil.PROGRESS_BAR_MAX)
+//        seekBar.setMax(ControllerUtil.PROGRESS_BAR_MAX)
+        seekBar.setMax(920)
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
             }
@@ -164,6 +166,7 @@ class PlayActivity : BasePlayerActivity(), AnkoLogger {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 dragging = false
                 HDExoPlayer.seekTo(seekBar.progress * HDExoPlayer.getDuration() / ControllerUtil.PROGRESS_BAR_MAX)
+//                HDExoPlayer.seekTo(seekBar.progress * HDExoPlayer.getDuration() / 1000)
             }
         })
         iv_play.setOnClickListener(View.OnClickListener {

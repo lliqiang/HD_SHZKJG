@@ -18,19 +18,21 @@ open class AppConfig {
         const val FIRST_CONFIG = "FIRST_CONFIG"
         const val FIRST_CREATE = "FIRST_CREATE"
         const val COUNT = "COUNT"
+        const val TEMPCOUNT = "TEMPCOUNT"
         var AUTO = 1
         //        var Recard: String by DelegatesExt.preference(App.instance, DEVICENUM, DEFALUT_DEVICENUM)
         var FirstConfig: Boolean by DelegatesExt.preference(App.instance, FIRST_CONFIG, true)
         var FirstCreate: Boolean by DelegatesExt.preference(App.instance, FIRST_CREATE, true)
-        var Count: Int by DelegatesExt.preference(App.instance, COUNT, 69)
+        var Count: Int by DelegatesExt.preference(App.instance, COUNT, 501)
+        var TempCount: Int by DelegatesExt.preference(App.instance, TEMPCOUNT, 69)
         //        var deviceNum: String by DelegatesExt.preference(App.instance, DEVICENUM, DEFALUT_DEVICENUM)
         var reCard = arrayOfNulls<String>(5)
         const val DEFAULT_SSID = "SHZBWG"
         const val TEXTTEXT_SSID = "GLBWG"
-        var ISPLAY:Boolean=false
-        var ISHOME:Boolean=false
+        var ISPLAY: Boolean = false
+        var ISHOME: Boolean = false
         var CONSTANT = 0
-        var TYPECONFIG=1
+        var TYPECONFIG = 1
         //    馆方内网-默认网络请求服务器地址
         const val DEFAULT_IP_PORT_I = "192.168.16.30/12345"
         //    馆方外网-默认网络请求服务器地址
@@ -46,7 +48,7 @@ open class AppConfig {
         }
 
         fun getRoutePath(type: String): String {
-            return getDefaultFileDir() + "map/" + "route_"+type+".png"
+            return getDefaultFileDir() + "map/" + "route_" + type + ".png"
         }
 
         //展品列表图片

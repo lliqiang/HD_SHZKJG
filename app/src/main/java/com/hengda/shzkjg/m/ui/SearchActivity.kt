@@ -16,6 +16,7 @@ import android.content.ContentValues
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.OrientationHelper
 import android.text.TextUtils
+import android.util.Log
 import com.hengda.shzkjg.m.adapter.ExhibitAdapter
 import com.hengda.shzkjg.m.base.AppConfig
 import com.hengda.shzkjg.m.base.BaseActivity
@@ -42,6 +43,7 @@ class SearchActivity : BaseActivity() {
     var exhibitList: List<Exhibit>? = mutableListOf<Exhibit>()
     //    var exhibitHistory: List<Exhibit>? = mutableListOf()
     var flag = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.search_layout)
@@ -69,8 +71,7 @@ class SearchActivity : BaseActivity() {
         var exhibitHistory: List<Exhibit>? = mutableListOf()
         flow_search.removeAllViews()
         AppConfig.database.use {
-            exhibitHistory = select("MUSEUM_EXHIBIT ").whereSimple("temp>68 ORDER BY temp DESC").parseList { Exhibit(it as MutableMap<String, Any?>) }
-            info { "exhibitHistory.size: --------------${(exhibitHistory as List<Exhibit>).size}" }
+            exhibitHistory = select("MUSEUM_EXHIBIT ").whereSimple("temp>500 ORDER BY temp DESC").parseList { Exhibit(it as MutableMap<String, Any?>) }
         }
         if (exhibitHistory!!.size > 0) {
             tv_clear_two.text = "清除搜索记录"
@@ -158,7 +159,6 @@ class SearchActivity : BaseActivity() {
             tv_clear_two.visibility = View.VISIBLE
             tv_clear_two.text = "暂无搜索记录"
             AppConfig.database.use {
-
                 var exhibitHistory: List<Exhibit>?
                 exhibitHistory = select("MUSEUM_EXHIBIT ").whereSimple("temp>30 ORDER BY pk DESC").parseList { Exhibit(it as MutableMap<String, Any?>) }
 //                exhibitHistory = select("MUSEUM_EXHIBIT ").whereSimple("pk>30 ORDER BY pk DESC").parseList { Exhibit(it as MutableMap<String, Any?>) }
@@ -174,9 +174,7 @@ class SearchActivity : BaseActivity() {
             }
         }
         iv_back_common.setOnClickListener { finish() }
-        iv_scan.setOnClickListener {
-            ScannerActivity.gotoActivity(this, scanConfig);
-        }
+        iv_scan.visibility = View.GONE
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -197,7 +195,7 @@ class SearchActivity : BaseActivity() {
                             } else {
                                 toast("您扫描的二维不存在，请选择正确的二维码扫描")
                             }
-                        }else{
+                        } else {
                             toast("您扫描的二维不存在，请选择正确的二维码扫描")
                         }
                     }

@@ -37,7 +37,7 @@ class ScrollFragment : Fragment() {
         // Inflate the layout for this fragment
         exhibitionList = mutableListOf<Exhibition>()
         AppConfig.database.use {
-            exhibitionList = select("EXHIBIT_ROOM").parseList { Exhibition(it as MutableMap<String, Any?>) }
+            exhibitionList = select("EXHIBIT_ROOM ORDER BY MapId,ExhibitId").parseList { Exhibition(it as MutableMap<String, Any?>) }
         }
         return inflater!!.inflate(R.layout.fragment_scroll, container, false)
     }

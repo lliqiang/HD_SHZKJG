@@ -9,6 +9,7 @@
         android:id="@+id/wv_call"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:hardwareAccelerated="false"
+        android:background="@mipmap/bg_common1"/>
 
 </LinearLayout>

@@ -31,7 +31,7 @@ class ScrollAdapter(layoutResId: Int, data: MutableList<Exhibition>?) : BaseQuic
             3 -> helper!!.setText(R.id.tv_floor_item, "楼层: 三层")
         }
         helper!!.setText(R.id.tv_name_exhibition_item, "展区名称: "+item!!.ExhibitName)
-        Glide.with(mContext).load(AppConfig.getImgExhibitionPath(item!!.MapId, item.ExhibitId)).placeholder(R.mipmap.img_def_scroll).into(helper!!.getView<ImageView>(R.id.iv_itemScroll))
+        Glide.with(mContext).load(AppConfig.getImgExhibitionPath(item!!.MapId, item.ExhibitId)).placeholder(R.mipmap.img_scroll_def).into(helper!!.getView<ImageView>(R.id.iv_itemScroll))
     }
 
 }

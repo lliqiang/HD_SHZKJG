@@ -29,6 +29,7 @@ import org.jetbrains.anko.db.MapRowParser
 import org.jetbrains.anko.db.SelectQueryBuilder
 import org.jetbrains.anko.db.select
 import kotlin.properties.Delegates
+import android.widget.ScrollView
 
 
 class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListener {
@@ -38,7 +39,6 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
     val scanFrg: ScanFragment = ScanFragment.newInstance()
     val callFrg: CallFragment = CallFragment.newInstance()
     val mapFrg: MapFragment = MapFragment.newInstance(1, 0, 0)
-    val listFrg: ListFragment = ListFragment.newInstance()
     val scrolltFrg: ScrollFragment = ScrollFragment.newInstance()
     val aboutFrg: AboutFragment = AboutFragment.newInstance()
     val settingFrg: SettingFragment = SettingFragment.newInstance()
@@ -48,6 +48,7 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
     var mapList: List<MapInfo> by Delegates.notNull()
     var floor: Int = 1
     var flag: Boolean = false
+    var isRoute: Boolean = false
     var type: Int = 0
     var route: Int = 0
 
@@ -55,7 +56,7 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        checkUpdata()
+        checkUpdata()
         HDNumService.startService(this, 1, 0, 5.0, -90)
         NumManager.registerNumChangeListener(this)
         tipView = View.inflate(this, R.layout.layout_guide_tip, null)
@@ -63,7 +64,7 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
         setListener()
         iv_socket_map.visibility = View.VISIBLE
         ll_swipe.visibility = View.VISIBLE
-        initTip()
+
         //查询展厅和展品
         AppConfig.database.use {
             mapList = select("MAP_INFO").parseList { MapInfo(it as MutableMap<String, Any?>) }
@@ -76,7 +77,8 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
         iv_search_common.visibility = View.VISIBLE
         draw_layout.closeDrawers()
         showSocket(iv_socket_list)
-        supportFragmentManager.beginTransaction().replace(R.id.container_main,scrolltFrg).commitAllowingStateLoss()
+        isSelectTv(R.id.tv_slide_list_guide)
+        supportFragmentManager.beginTransaction().replace(R.id.container_main, scrolltFrg).commitAllowingStateLoss()
     }
 
     private fun initTip() {
@@ -108,7 +110,14 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
     }
 
     fun setListener() {
-        iv_menu.setOnClickListener { draw_layout.openDrawer(Gravity.LEFT) }
+        iv_menu.setOnClickListener {
+            draw_layout.openDrawer(Gravity.LEFT)
+            Handler().postDelayed(Runnable {
+                scroll_main.fullScroll(ScrollView.FOCUS_DOWN)
+            }, 100)
+
+
+        }
         tv_search.setOnClickListener { startActivity<SearchActivity>() }
 
         iv_switch_floor.setOnClickListener {
@@ -129,9 +138,7 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
                                         AppConfig.CONSTANT = 1
                                         val mapFrg: MapFragment = MapFragment.newInstance(1, type, route)
                                         floor = 1
-                                        holder.convertView.find<RadioButton>(R.id.rb_floor_one).setTextColor(resources.getColor(R.color.white))
-                                        holder.convertView.find<RadioButton>(R.id.rb_floor_two).setTextColor(resources.getColor(R.color.black))
-                                        holder.convertView.find<RadioButton>(R.id.rb_floor_three).setTextColor(resources.getColor(R.color.black))
+
                                         supportFragmentManager.beginTransaction().replace(R.id.container_main, mapFrg).commit()
 
                                     }
@@ -140,9 +147,6 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
                                         iv_switch_floor.setImageResource(R.mipmap.img_floor_two)
                                         AppConfig.CONSTANT = 1
                                         floor = 2
-                                        holder.convertView.find<RadioButton>(R.id.rb_floor_one).setTextColor(resources.getColor(R.color.black))
-                                        holder.convertView.find<RadioButton>(R.id.rb_floor_two).setTextColor(resources.getColor(R.color.white))
-                                        holder.convertView.find<RadioButton>(R.id.rb_floor_three).setTextColor(resources.getColor(R.color.black))
                                         val mapFrg: MapFragment = MapFragment.newInstance(2, type, route)
                                         supportFragmentManager.beginTransaction().replace(R.id.container_main, mapFrg).commit()
 
@@ -151,20 +155,25 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
                                         iv_switch_floor.setImageResource(R.mipmap.img_floor_three)
                                         AppConfig.CONSTANT = 1
                                         floor = 3
-                                        holder.convertView.find<RadioButton>(R.id.rb_floor_one).setTextColor(resources.getColor(R.color.black))
-                                        holder.convertView.find<RadioButton>(R.id.rb_floor_two).setTextColor(resources.getColor(R.color.black))
-                                        holder.convertView.find<RadioButton>(R.id.rb_floor_three).setTextColor(resources.getColor(R.color.white))
                                         val mapFrg: MapFragment = MapFragment.newInstance(3, type, route)
                                         supportFragmentManager.beginTransaction().replace(R.id.container_main, mapFrg).commit()
                                     }
-
                                 }
 
                             }
                             when (floor) {
-                                1 -> holder.convertView.find<RadioButton>(R.id.rb_floor_one).isChecked = true
-                                2 -> holder.convertView.find<RadioButton>(R.id.rb_floor_two).isChecked = true
-                                3 -> holder.convertView.find<RadioButton>(R.id.rb_floor_three).isChecked = true
+                                1 -> {
+                                    holder.convertView.find<RadioButton>(R.id.rb_floor_one).setBackgroundResource(R.mipmap.img_jump_guide)
+                                    holder.convertView.find<RadioButton>(R.id.rb_floor_one).setTextColor(resources.getColor(R.color.white))
+                                }
+                                2 -> {
+                                    holder.convertView.find<RadioButton>(R.id.rb_floor_two).setBackgroundResource(R.mipmap.img_jump_guide)
+                                    holder.convertView.find<RadioButton>(R.id.rb_floor_two).setTextColor(resources.getColor(R.color.white))
+                                }
+                                3 -> {
+                                    holder.convertView.find<RadioButton>(R.id.rb_floor_three).setBackgroundResource(R.mipmap.img_jump_guide)
+                                    holder.convertView.find<RadioButton>(R.id.rb_floor_three).setTextColor(resources.getColor(R.color.white))
+                                }
                             }
 
                         }
@@ -176,46 +185,53 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
 
         }
 
-
         iv_route.setOnClickListener {
-            var dialog1: NiceDialog = NiceDialog.init()
-            dialog1.setLayoutId(R.layout.dialog_switch_route)
-                    .setConvertListener(object : ViewConvertListener {
-                        override fun convertView(holder: ViewHolder, dialog: BaseNiceDialog) {
-                            holder.convertView.find<ImageView>(R.id.iv_close_dialog_route).setOnClickListener { dialog.dismiss() }
-                            holder.convertView.find<RadioButton>(R.id.rb_route_all).setOnClickListener { dialog.dismiss() }
-                            holder.convertView.find<RadioButton>(R.id.rb_route_classics).setOnClickListener { dialog.dismiss() }
-                            holder.convertView.find<RadioGroup>(R.id.rp_route).setOnCheckedChangeListener { group, checkedId ->
-                                when (checkedId) {
-                                    R.id.rb_route_all -> {
-                                        AppConfig.CONSTANT = 1
-                                        route = 0
-                                        val mapFrg: MapFragment = MapFragment.newInstance(floor, type, route)
-                                        holder.convertView.find<RadioButton>(R.id.rb_route_all).setTextColor(resources.getColor(R.color.white))
-                                        holder.convertView.find<RadioButton>(R.id.rb_route_classics).setTextColor(resources.getColor(R.color.black))
-                                        supportFragmentManager.beginTransaction().replace(R.id.container_main, mapFrg).commit()
-                                    }
-                                    R.id.rb_route_classics -> {
-                                        AppConfig.CONSTANT = 1
-                                        route = 1
-                                        holder.convertView.find<RadioButton>(R.id.rb_route_all).setTextColor(resources.getColor(R.color.black))
-                                        holder.convertView.find<RadioButton>(R.id.rb_route_classics).setTextColor(resources.getColor(R.color.white))
-                                        val mapFrg: MapFragment = MapFragment.newInstance(floor, type, route)
-                                        supportFragmentManager.beginTransaction().replace(R.id.container_main, mapFrg).commit()
-                                    }
-                                }
-                            }
-                            when (route) {
-                                0 -> holder.convertView.find<RadioButton>(R.id.rb_route_all).isChecked = true
-                                1 -> holder.convertView.find<RadioButton>(R.id.rb_route_classics).isChecked = true
-                            }
-
-                        }
-                    })
-                    .setDimAmount(0.3f)
-                    .setShowBottom(false)
-                    .setOutCancel(true)
-                    .show(supportFragmentManager)
+            if (isRoute) {
+                route = 0
+            } else {
+                route = 1
+            }
+            isRoute = !isRoute
+            val mapFrg: MapFragment = MapFragment.newInstance(floor, type, route)
+            supportFragmentManager.beginTransaction().replace(R.id.container_main, mapFrg).commit()
+//            var dialog1: NiceDialog = NiceDialog.init()
+//            dialog1.setLayoutId(R.layout.dialog_switch_route)
+//                    .setConvertListener(object : ViewConvertListener {
+//                        override fun convertView(holder: ViewHolder, dialog: BaseNiceDialog) {
+//                            holder.convertView.find<ImageView>(R.id.iv_close_dialog_route).setOnClickListener { dialog.dismiss() }
+//                            holder.convertView.find<RadioButton>(R.id.rb_route_all).setOnClickListener { dialog.dismiss() }
+//                            holder.convertView.find<RadioButton>(R.id.rb_route_classics).setOnClickListener { dialog.dismiss() }
+//                            holder.convertView.find<RadioGroup>(R.id.rp_route).setOnCheckedChangeListener { group, checkedId ->
+//                                when (checkedId) {
+//                                    R.id.rb_route_all -> {
+//                                        AppConfig.CONSTANT = 1
+//                                        route = 0
+//                                        val mapFrg: MapFragment = MapFragment.newInstance(floor, type, route)
+//                                        holder.convertView.find<RadioButton>(R.id.rb_route_all).setTextColor(resources.getColor(R.color.white))
+//                                        holder.convertView.find<RadioButton>(R.id.rb_route_classics).setTextColor(resources.getColor(R.color.black))
+//                                        supportFragmentManager.beginTransaction().replace(R.id.container_main, mapFrg).commit()
+//                                    }
+//                                    R.id.rb_route_classics -> {
+//                                        AppConfig.CONSTANT = 1
+//                                        route = 1
+//                                        holder.convertView.find<RadioButton>(R.id.rb_route_all).setTextColor(resources.getColor(R.color.black))
+//                                        holder.convertView.find<RadioButton>(R.id.rb_route_classics).setTextColor(resources.getColor(R.color.white))
+//                                        val mapFrg: MapFragment = MapFragment.newInstance(floor, type, route)
+//                                        supportFragmentManager.beginTransaction().replace(R.id.container_main, mapFrg).commit()
+//                                    }
+//                                }
+//                            }
+//                            when (route) {
+//                                0 -> holder.convertView.find<RadioButton>(R.id.rb_route_all).isChecked = true
+//                                1 -> holder.convertView.find<RadioButton>(R.id.rb_route_classics).isChecked = true
+//                            }
+//
+//                        }
+//                    })
+//                    .setDimAmount(0.3f)
+//                    .setShowBottom(false)
+//                    .setOutCancel(true)
+//                    .show(supportFragmentManager)
 
 
         }
@@ -224,21 +240,27 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
             AppConfig.CONSTANT = 1
             if (!flag) {
                 AppConfig.ISHOME = false
+                iv_route.isClickable = false
                 val mapFrg: MapFragment = MapFragment.newInstance(floor, 1, route)
                 supportFragmentManager.beginTransaction().replace(R.id.container_main, mapFrg).commit()
                 type = 1
+                iv_common_device.setImageResource(R.mipmap.img_common_device_switched)
             } else {
+                iv_route.isClickable = true
                 AppConfig.ISHOME = false
                 val mapFrg: MapFragment = MapFragment.newInstance(floor, 0, route)
                 supportFragmentManager.beginTransaction().replace(R.id.container_main, mapFrg).commit()
                 type = 0
+                iv_common_device.setImageResource(R.mipmap.img_common_device_normal)
             }
             flag = !flag
         }
         tv_slide_map_guide.setOnClickListener {
+            iv_search_common.visibility = View.GONE
+            initTip()
             AppConfig.CONSTANT = 1
             AppConfig.TYPECONFIG = 1
-
+            val mapFrg: MapFragment = MapFragment.newInstance(floor, type, route)
             supportFragmentManager.beginTransaction().replace(R.id.container_main, mapFrg).commit()
             draw_layout.closeDrawers()
             tv_search.visibility = View.VISIBLE
@@ -246,8 +268,10 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
             ll_swipe.visibility = View.VISIBLE
             AppConfig.ISHOME = false
             showSocket(iv_socket_map)
+            isSelectTv(R.id.tv_slide_map_guide)
         }
         tv_slide_list_guide.setOnClickListener {
+            iv_search_common.visibility = View.VISIBLE
             AppConfig.CONSTANT = 0
             supportFragmentManager.beginTransaction().replace(R.id.container_main, scrolltFrg).commit()
             tv_search.visibility = View.VISIBLE
@@ -257,8 +281,11 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
             iv_search_common.visibility = View.VISIBLE
             draw_layout.closeDrawers()
             showSocket(iv_socket_list)
+            isSelectTv(R.id.tv_slide_list_guide)
         }
         tv_slide_intro.setOnClickListener {
+            iv_search_common.visibility = View.GONE
+            isSelectTv(R.id.tv_slide_intro)
             AppConfig.CONSTANT = 0
             supportFragmentManager.beginTransaction().replace(R.id.container_main, inroFrg).commit()
             tv_search.visibility = View.GONE
@@ -270,6 +297,7 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
             showSocket(iv_socket_intro)
         }
         tv_slide_about.setOnClickListener {
+            isSelectTv(R.id.tv_slide_about)
             AppConfig.CONSTANT = 0
             supportFragmentManager.beginTransaction().replace(R.id.container_main, aboutFrg).commit()
             draw_layout.closeDrawers()
@@ -281,6 +309,7 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
             showSocket(iv_socket_about)
         }
         tv_slide_scan_guide.setOnClickListener {
+            isSelectTv(R.id.tv_slide_scan_guide)
             AppConfig.CONSTANT = 0
             supportFragmentManager.beginTransaction().replace(R.id.container_main, scanFrg).commit()
             tv_search.visibility = View.GONE
@@ -292,6 +321,7 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
             showSocket(iv_socket_scan)
         }
         tv_slide_call.setOnClickListener {
+            isSelectTv(R.id.tv_slide_call)
             AppConfig.CONSTANT = 0
             supportFragmentManager.beginTransaction().replace(R.id.container_main, callFrg).commit()
             tv_search.visibility = View.GONE
@@ -304,6 +334,8 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
         }
 
         tv_setting.setOnClickListener {
+            isSelectTv(R.id.tv_setting)
+            showSocket(iv_socket_setting)
             AppConfig.CONSTANT = 0
             supportFragmentManager.beginTransaction().replace(R.id.container_main, settingFrg).commit()
             draw_layout.closeDrawers()
@@ -318,26 +350,6 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
         }
     }
 
-    private fun setColor(resId: Int) {
-        when (resId) {
-            R.id.rb_floor_one -> {
-                rb_floor_one.setTextColor(resources.getColor(R.color.white))
-                rb_floor_two.setTextColor(resources.getColor(R.color.black))
-                rb_floor_three.setTextColor(resources.getColor(R.color.black))
-            }
-            R.id.rb_floor_two -> {
-                rb_floor_one.setTextColor(resources.getColor(R.color.black))
-                rb_floor_two.setTextColor(resources.getColor(R.color.white))
-                rb_floor_three.setTextColor(resources.getColor(R.color.black))
-            }
-            R.id.rb_floor_three -> {
-                rb_floor_one.setTextColor(resources.getColor(R.color.black))
-                rb_floor_two.setTextColor(resources.getColor(R.color.black))
-                rb_floor_three.setTextColor(resources.getColor(R.color.white))
-            }
-        }
-
-    }
 
     fun showSocket(img: ImageView) {
         when (img) {
@@ -348,6 +360,7 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
                 iv_socket_list.visibility = View.INVISIBLE
                 iv_socket_call.visibility = View.INVISIBLE
                 iv_socket_scan.visibility = View.INVISIBLE
+                iv_socket_setting.visibility = View.INVISIBLE
 
             }
             iv_socket_about -> {
@@ -357,6 +370,7 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
                 iv_socket_list.visibility = View.INVISIBLE
                 iv_socket_call.visibility = View.INVISIBLE
                 iv_socket_scan.visibility = View.INVISIBLE
+                iv_socket_setting.visibility = View.INVISIBLE
             }
             iv_socket_intro -> {
                 iv_socket_map.visibility = View.INVISIBLE
@@ -365,6 +379,7 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
                 iv_socket_list.visibility = View.INVISIBLE
                 iv_socket_call.visibility = View.INVISIBLE
                 iv_socket_scan.visibility = View.INVISIBLE
+                iv_socket_setting.visibility = View.INVISIBLE
             }
             iv_socket_list -> {
                 iv_socket_map.visibility = View.INVISIBLE
@@ -373,6 +388,7 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
                 iv_socket_list.visibility = View.VISIBLE
                 iv_socket_call.visibility = View.INVISIBLE
                 iv_socket_scan.visibility = View.INVISIBLE
+                iv_socket_setting.visibility = View.INVISIBLE
             }
             iv_socket_scan -> {
                 iv_socket_map.visibility = View.INVISIBLE
@@ -381,6 +397,7 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
                 iv_socket_list.visibility = View.INVISIBLE
                 iv_socket_call.visibility = View.INVISIBLE
                 iv_socket_scan.visibility = View.VISIBLE
+                iv_socket_setting.visibility = View.INVISIBLE
             }
             iv_socket_call -> {
                 iv_socket_map.visibility = View.INVISIBLE
@@ -389,7 +406,18 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
                 iv_socket_list.visibility = View.INVISIBLE
                 iv_socket_call.visibility = View.VISIBLE
                 iv_socket_scan.visibility = View.INVISIBLE
+                iv_socket_setting.visibility = View.INVISIBLE
             }
+            iv_socket_setting -> {
+                iv_socket_map.visibility = View.INVISIBLE
+                iv_socket_about.visibility = View.INVISIBLE
+                iv_socket_intro.visibility = View.INVISIBLE
+                iv_socket_list.visibility = View.INVISIBLE
+                iv_socket_call.visibility = View.INVISIBLE
+                iv_socket_scan.visibility = View.INVISIBLE
+                iv_socket_setting.visibility = View.VISIBLE
+            }
+
         }
     }
 
@@ -473,6 +501,76 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
             temp_flag = true
         }
         return temp_flag
+    }
+
+    fun isSelectTv(resId: Int) {
+        when (resId) {
+            R.id.tv_slide_intro -> {
+                tv_slide_intro.isSelected = true
+                tv_slide_map_guide.isSelected = false
+                tv_slide_list_guide.isSelected = false
+                tv_slide_scan_guide.isSelected = false
+                tv_slide_about.isSelected = false
+                tv_slide_call.isSelected = false
+                tv_setting.isSelected = false
+            }
+            R.id.tv_slide_map_guide -> {
+                tv_slide_intro.isSelected = false
+                tv_slide_map_guide.isSelected = true
+                tv_slide_list_guide.isSelected = false
+                tv_slide_scan_guide.isSelected = false
+                tv_slide_about.isSelected = false
+                tv_slide_call.isSelected = false
+                tv_setting.isSelected = false
+            }
+            R.id.tv_slide_list_guide -> {
+                tv_slide_intro.isSelected = false
+                tv_slide_map_guide.isSelected = false
+                tv_slide_list_guide.isSelected = true
+                tv_slide_scan_guide.isSelected = false
+                tv_slide_about.isSelected = false
+                tv_slide_call.isSelected = false
+                tv_setting.isSelected = false
+            }
+            R.id.tv_slide_scan_guide -> {
+                tv_slide_intro.isSelected = false
+                tv_slide_map_guide.isSelected = false
+                tv_slide_list_guide.isSelected = false
+                tv_slide_scan_guide.isSelected = true
+                tv_slide_about.isSelected = false
+                tv_slide_call.isSelected = false
+                tv_setting.isSelected = false
+            }
+            R.id.tv_slide_about -> {
+                tv_slide_intro.isSelected = false
+                tv_slide_map_guide.isSelected = false
+                tv_slide_list_guide.isSelected = false
+                tv_slide_scan_guide.isSelected = false
+                tv_slide_about.isSelected = true
+                tv_slide_call.isSelected = false
+                tv_setting.isSelected = false
+            }
+            R.id.tv_slide_call -> {
+                tv_slide_intro.isSelected = false
+                tv_slide_map_guide.isSelected = false
+                tv_slide_list_guide.isSelected = false
+                tv_slide_scan_guide.isSelected = false
+                tv_slide_about.isSelected = false
+                tv_slide_call.isSelected = true
+                tv_setting.isSelected = false
+            }
+            R.id.tv_setting -> {
+                tv_slide_intro.isSelected = false
+                tv_slide_map_guide.isSelected = false
+                tv_slide_list_guide.isSelected = false
+                tv_slide_scan_guide.isSelected = false
+                tv_slide_about.isSelected = false
+                tv_slide_call.isSelected = false
+                tv_setting.isSelected = true
+            }
+
+
+        }
     }
 
     override fun onResume() {

@@ -63,7 +63,8 @@ public class ChinesePresenter implements LanguageContract.Presenter, DownloadCal
         if (NetUtil.isConnected(App.Companion.getInstance())) {
             if (NetUtil.isWifi(App.Companion.getInstance())) {
                 if (wifiSSID.contains(AppConfig.DEFAULT_SSID)) {
-                    path = "http://" + AppConfig.DEFAULT_IP_PORT_I + "/HD_SHZBWG_RES/Hd_SHZBWG_res.zip";
+                    path = "http://" + AppConfig.DEFAULT_IP_PORT_I + "/Hd_SHZBWG_res.zip";
+//                    http://192.168.16.30/12345/Hd_SHZBWG_res.zip
                 } else {
                     path = "http://47.93.81.30/HD_down/Hd_SHZBWG_res.zip ";
                 }

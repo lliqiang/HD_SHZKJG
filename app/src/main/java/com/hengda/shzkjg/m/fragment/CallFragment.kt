@@ -1,6 +1,7 @@
 package com.hengda.shzkjg.m.fragment
 
 
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -34,7 +35,8 @@ class CallFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        wv_call.setBackgroundResource(0)
+        wv_call.setBackgroundResource(R.mipmap.bg_common1);
+        wv_call.setBackgroundColor(Color.argb(0, 0, 0, 0));
         wv_call.setWebViewClient(object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 view.loadUrl(url)
@@ -45,7 +47,7 @@ class CallFragment : Fragment() {
                 super.onPageFinished(view, url)
             }
         })
-        val path = AppConfig.getWebPath("introduce")
+        val path = AppConfig.getWebPath("contact")
         wv_call.loadUrl("file:///" + path)
     }
 

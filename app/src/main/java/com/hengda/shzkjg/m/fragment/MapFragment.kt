@@ -6,6 +6,7 @@ import android.content.Intent
 import android.database.Cursor
 import android.media.Image
 import android.os.Bundle
+import android.os.Handler
 import android.support.annotation.IntegerRes
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -25,9 +26,11 @@ import com.hengda.shzkjg.m.bean.Exhibit
 import com.hengda.shzkjg.m.bean.MapInfo
 import com.hengda.shzkjg.m.ui.PlayActivity
 import kotlinx.android.synthetic.main.mark_layout.*
+import kotlinx.android.synthetic.main.tab_layout.*
 import org.altbeacon.beacon.Beacon
 import org.jetbrains.anko.*
 import org.jetbrains.anko.db.*
+import kotlin.concurrent.fixedRateTimer
 import kotlin.properties.Delegates
 
 
@@ -38,6 +41,7 @@ class MapFragment : Fragment(), AnkoLogger, NumManager.OnNumChangeListener {
 
     var tileView: HDTileView? = null
     var path: String by Delegates.notNull()
+    var path1: String by Delegates.notNull()
     var mapList: List<MapInfo> by Delegates.notNull()
     var exhibitList: List<Exhibit>? = null
     var floor: Int = 1
@@ -46,6 +50,7 @@ class MapFragment : Fragment(), AnkoLogger, NumManager.OnNumChangeListener {
     val viewList = mutableListOf<View>()
     var lastNum: Int = 0
     lateinit var imgRoute: ImageView
+    var isStartBle = false
 
     companion object {
         fun newInstance(floor: Int, type: Int, route: Int): MapFragment {
@@ -73,11 +78,14 @@ class MapFragment : Fragment(), AnkoLogger, NumManager.OnNumChangeListener {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         if (type == 0) {
-            if (route == 0) {
-                Glide.with(activity).load(AppConfig.getMapPath(floor) + "/" + "route_one.png").into(imgRoute)
-            } else {
-                Glide.with(activity).load(AppConfig.getMapPath(floor) + "/" + "route_two.png").into(imgRoute)
+            if (route == 1) {
+                when (floor) {
+                    1 -> Glide.with(activity).load(AppConfig.getMapPath(floor) + "/" + "route_one.png").into(imgRoute)
+                    2 -> Glide.with(activity).load(AppConfig.getMapPath(floor) + "/" + "route_two.png").into(imgRoute)
+                    3 -> Glide.with(activity).load(AppConfig.getMapPath(floor) + "/" + "route_three.png").into(imgRoute)
+                }
             }
+
         }
         loadData()
         initTileView()
@@ -91,11 +99,8 @@ class MapFragment : Fragment(), AnkoLogger, NumManager.OnNumChangeListener {
             mapList = select("MAP_INFO").whereSimple("id=?", floor.toString()).parseList { MapInfo(it as MutableMap<String, Any?>) }
         }
         AppConfig.database.use {
-            if (route == 0) {
-                exhibitList = select("MUSEUM_EXHIBIT").whereSimple("isClassics=0 AND MapId=? AND IsExhibit=?", floor.toString(), type.toString()).parseList { Exhibit(it as MutableMap<String, Any?>) }
-            } else {
-                exhibitList = select("MUSEUM_EXHIBIT").whereSimple("isClassics=1 AND MapId=? AND IsExhibit=?", floor.toString(), type.toString()).parseList { Exhibit(it as MutableMap<String, Any?>) }
-            }
+                exhibitList = select("MUSEUM_EXHIBIT").whereSimple("MapId=? AND IsExhibit=?", floor.toString(), type.toString()).parseList { Exhibit(it as MutableMap<String, Any?>) }
+
         }
     }
 
@@ -104,47 +109,71 @@ class MapFragment : Fragment(), AnkoLogger, NumManager.OnNumChangeListener {
         path = AppConfig.getMapPath(floor)
         tileView!!.init(4.0f, 0.5f, mapList.get(0).Width, mapList.get(0).Height, path)
         tileView!!.loadMapFromDisk()
-//        tileView!!.setMinimumScaleFullScreen()
-        tileView!!.scale=1.5f
+        tileView!!.setMinimumScaleFullScreen()
         tileView!!.addSample(path + "/img.png", false)
         if (imgRoute.parent != null) {
             (imgRoute.parent as ViewGroup).removeView(imgRoute)
         }
         tileView!!.addView(imgRoute)
+        Handler().postDelayed(Runnable {
+            if (tileView != null) {
+                tileView!!.slideToAndCenterWithScale((mapList.get(0).Width), (mapList.get(0).Height),if (floor==3) 1.5f else 2.0f)
+                isStartBle = true
+            }
+        }, 100)
+
+
     }
 
     fun addMark(exhibits: List<Exhibit>) {
-        exhibits.forEach { it ->
-            var markView: View = View.inflate(activity, R.layout.mark_layout, null)
-            var markImg: ImageView = markView.find<ImageView>(R.id.iv_mark)
-            var tv_Name = markView.find<TextView>(R.id.tv_markName)
-            tv_Name.isSelected = true
-            var dotImg = markView.find<ImageView>(R.id.iv_dot)
-            tv_Name.text = it.Name
-            tv_Name.isSelected = true
-            if (it.IsExhibit == 0) {
-                if (it.IsRead == 0) {
-                    dotImg.setImageResource(R.mipmap.img_dot_no)
-                } else {
-                    dotImg.setImageResource(R.mipmap.img_dot_yes)
-                }
-            } else {
-                dotImg.visibility = View.INVISIBLE
-            }
+        if (type == 0) {
+            exhibits.forEach { it ->
+                var markView: View = View.inflate(activity, R.layout.mark_layout, null)
+                var markImg: ImageView = markView.find<ImageView>(R.id.iv_mark)
+                var tv_Name = markView.find<TextView>(R.id.tv_markName)
+                tv_Name.isSelected = true
+                var dotImg = markView.find<ImageView>(R.id.iv_dot)
+                tv_Name.text = it.Name
+                tv_Name.isSelected = true
 
-            Glide.with(activity).load(AppConfig.getMarkPath(it.FileNo))
-                    .placeholder(R.mipmap.img_mark_default).error(R.mipmap.img_mark_default).into(markImg)
-            markView.tag = it.AutoNum
-            viewList.add(markView)
-            tileView!!.addMarker(markView, it.LocX.toDouble(), it.LocY.toDouble(), -0.5f, -1.0f)
-            if (type == 0) {
-                markView.setOnClickListener { v ->
-                    activity.startActivity<PlayActivity>("exhibit" to it)
+                if (it.IsExhibit == 0) {
+                    if (it.IsRead == 0) {
+                        dotImg.setImageResource(R.mipmap.img_dot_no)
+                    } else {
+                        dotImg.setImageResource(R.mipmap.img_dot_yes)
+                    }
+                } else {
+                    dotImg.visibility = View.INVISIBLE
                 }
-            } else {
-                tv_Name.visibility = View.VISIBLE
+
+                Glide.with(activity).load(AppConfig.getMarkPath(it.FileNo))
+                        .placeholder(R.mipmap.img_mark_default).error(R.mipmap.img_mark_default).into(markImg)
+                markView.tag = it.AutoNum
+                viewList.add(markView)
+                if (it.LocX != 0) {
+                    tileView!!.addMarker(markView, it.LocX.toDouble(), it.LocY.toDouble(), -0.5f, -1.0f)
+                }
+                if (type == 0) {
+                    markView.setOnClickListener { v ->
+                        activity.startActivity<PlayActivity>("exhibit" to it)
+                    }
+                } else {
+                    tv_Name.visibility = View.VISIBLE
+
+                }
+            }
+        } else {
+            exhibits.forEach { it ->
+                var markView: View = View.inflate(activity, R.layout.device_layout, null)
+                var tv_Name = markView.find<TextView>(R.id.tv_device_name)
+                tv_Name.isSelected = true
+                tv_Name.text = it.Name
+                if (it.LocX != 0) {
+                    tileView!!.addMarker(markView, it.LocX.toDouble(), it.LocY.toDouble(), -0.5f, -1.0f)
+                }
             }
         }
+
     }
 
     override fun OnBeaconListChange(beacons: MutableList<Beacon>?) {
@@ -152,7 +181,7 @@ class MapFragment : Fragment(), AnkoLogger, NumManager.OnNumChangeListener {
     }
 
     override fun OnNumChange(num: Int) {
-        if (exhibitList!!.filter { it.AutoNum == num }.size > 0 && AppConfig.AUTO == 1) {
+        if (exhibitList!!.filter { it.AutoNum == num }.size > 0 && AppConfig.AUTO == 1 && isStartBle) {
             if (isReplay(num)) {
                 viewList.forEach {
                     recoverAnim(it)
@@ -161,7 +190,9 @@ class MapFragment : Fragment(), AnkoLogger, NumManager.OnNumChangeListener {
                 viewList.filter { it.tag == num }.forEach {
                     scaleAnim(it)
                 }
-                tileView!!.slideToAndCenter(exhibitList!!.filter { it.AutoNum == num }[0].LocX, exhibitList!!.filter { it.AutoNum == num }[0].LocY)
+                if (exhibitList!!.filter { it.AutoNum == num }[0].LocX != 0) {
+                    tileView!!.slideToPositionWithScale(exhibitList!!.filter { it.AutoNum == num }[0].LocX.toDouble(), exhibitList!!.filter { it.AutoNum == num }[0].LocY.toDouble(), 2.0f, 50)
+                }
             }
         }
     }
@@ -211,4 +242,5 @@ class MapFragment : Fragment(), AnkoLogger, NumManager.OnNumChangeListener {
             tileView = null
         }
     }
+
 }

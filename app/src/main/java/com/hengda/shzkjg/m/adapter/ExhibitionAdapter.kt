@@ -26,7 +26,7 @@ class ExhibitionAdapter(layoutResId: Int, data: MutableList<Exhibition>?) : Base
 
     override fun convert(helper: BaseViewHolder?, item: Exhibition?) {
         helper!!.setText(R.id.tv_title_list, item!!.ExhibitName)
-        Glide.with(mContext).load(AppConfig.getImgExhibitionPath(item!!.MapId, item.ExhibitId)).placeholder(R.mipmap.img_play_default).into(helper!!.getView<ImageView>(R.id.iv_list))
+        Glide.with(mContext).load(AppConfig.getImgExhibitionPath(item!!.MapId, item.ExhibitId)).placeholder(R.mipmap.img_list_def).into(helper!!.getView<ImageView>(R.id.iv_list))
     }
 
 }

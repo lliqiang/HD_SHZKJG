@@ -12,11 +12,10 @@
     <ImageView
         android:id="@+id/iv_play_detail"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-         />
+        android:layout_height="wrap_content" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@mipmap/bg_play"
         android:orientation="horizontal">
@@ -34,11 +33,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:thumb="@mipmap/img_dot"
             android:maxHeight="3dp"
             android:minHeight="3dp"
-            android:progressDrawable="@drawable/seek_bar_progress_drawable" />
+            android:layout_weight="1"
+            android:thumbOffset="2dp"
+            android:progressDrawable="@drawable/seek_bar_progress_drawable"
+            android:thumb="@mipmap/img_dot" />
 
         <TextView
             android:id="@+id/tv_endTime"
@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="10dp"
-            android:text="3:30"
+            android:text="0:00"
             android:textColor="@color/blue" />
     </LinearLayout>
 
