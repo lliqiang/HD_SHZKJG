@@ -287,7 +287,7 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
             iv_search_common.visibility = View.GONE
             isSelectTv(R.id.tv_slide_intro)
             AppConfig.CONSTANT = 0
-            supportFragmentManager.beginTransaction().replace(R.id.container_main, inroFrg).commit()
+            supportFragmentManager.beginTransaction().replace(R.id.container_main, inroFrg).commitAllowingStateLoss()
             tv_search.visibility = View.GONE
             iv_search_common.visibility = View.GONE
             tv_common_title.visibility = View.VISIBLE
@@ -299,7 +299,7 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
         tv_slide_about.setOnClickListener {
             isSelectTv(R.id.tv_slide_about)
             AppConfig.CONSTANT = 0
-            supportFragmentManager.beginTransaction().replace(R.id.container_main, aboutFrg).commit()
+            supportFragmentManager.beginTransaction().replace(R.id.container_main, aboutFrg).commitAllowingStateLoss()
             draw_layout.closeDrawers()
             tv_search.visibility = View.GONE
             tv_common_title.visibility = View.VISIBLE
@@ -311,7 +311,7 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
         tv_slide_scan_guide.setOnClickListener {
             isSelectTv(R.id.tv_slide_scan_guide)
             AppConfig.CONSTANT = 0
-            supportFragmentManager.beginTransaction().replace(R.id.container_main, scanFrg).commit()
+            supportFragmentManager.beginTransaction().replace(R.id.container_main, scanFrg).commitAllowingStateLoss()
             tv_search.visibility = View.GONE
             tv_common_title.visibility = View.VISIBLE
             ll_swipe.visibility = View.GONE
@@ -323,7 +323,7 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
         tv_slide_call.setOnClickListener {
             isSelectTv(R.id.tv_slide_call)
             AppConfig.CONSTANT = 0
-            supportFragmentManager.beginTransaction().replace(R.id.container_main, callFrg).commit()
+            supportFragmentManager.beginTransaction().replace(R.id.container_main, callFrg).commitAllowingStateLoss()
             tv_search.visibility = View.GONE
             tv_common_title.visibility = View.VISIBLE
             ll_swipe.visibility = View.GONE
@@ -337,7 +337,7 @@ class MainActivity : UpdateActivity(), AnkoLogger, NumManager.OnNumChangeListene
             isSelectTv(R.id.tv_setting)
             showSocket(iv_socket_setting)
             AppConfig.CONSTANT = 0
-            supportFragmentManager.beginTransaction().replace(R.id.container_main, settingFrg).commit()
+            supportFragmentManager.beginTransaction().replace(R.id.container_main, settingFrg).commitAllowingStateLoss()
             draw_layout.closeDrawers()
             tv_search.visibility = View.GONE
             iv_search_common.visibility = View.GONE

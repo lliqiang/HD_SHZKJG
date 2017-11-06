@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.hengda.frame.numreceiver.listener.NumManager
 import com.hengda.frame.tileview.HDTileView
 import com.hengda.frame.tileview.effect.animation.LoadAnimFactory
@@ -41,7 +42,6 @@ class MapFragment : Fragment(), AnkoLogger, NumManager.OnNumChangeListener {
 
     var tileView: HDTileView? = null
     var path: String by Delegates.notNull()
-    var path1: String by Delegates.notNull()
     var mapList: List<MapInfo> by Delegates.notNull()
     var exhibitList: List<Exhibit>? = null
     var floor: Int = 1
@@ -80,9 +80,9 @@ class MapFragment : Fragment(), AnkoLogger, NumManager.OnNumChangeListener {
         if (type == 0) {
             if (route == 1) {
                 when (floor) {
-                    1 -> Glide.with(activity).load(AppConfig.getMapPath(floor) + "/" + "route_one.png").into(imgRoute)
-                    2 -> Glide.with(activity).load(AppConfig.getMapPath(floor) + "/" + "route_two.png").into(imgRoute)
-                    3 -> Glide.with(activity).load(AppConfig.getMapPath(floor) + "/" + "route_three.png").into(imgRoute)
+                    1 -> Glide.with(activity).load(AppConfig.getMapPath(floor) + "/" + "route_one.png").diskCacheStrategy(DiskCacheStrategy.NONE).into(imgRoute)
+                    2 -> Glide.with(activity).load(AppConfig.getMapPath(floor) + "/" + "route_two.png").diskCacheStrategy(DiskCacheStrategy.NONE).into(imgRoute)
+                    3 -> Glide.with(activity).load(AppConfig.getMapPath(floor) + "/" + "route_three.png").diskCacheStrategy(DiskCacheStrategy.NONE).into(imgRoute)
                 }
             }
 
@@ -99,7 +99,7 @@ class MapFragment : Fragment(), AnkoLogger, NumManager.OnNumChangeListener {
             mapList = select("MAP_INFO").whereSimple("id=?", floor.toString()).parseList { MapInfo(it as MutableMap<String, Any?>) }
         }
         AppConfig.database.use {
-                exhibitList = select("MUSEUM_EXHIBIT").whereSimple("MapId=? AND IsExhibit=?", floor.toString(), type.toString()).parseList { Exhibit(it as MutableMap<String, Any?>) }
+            exhibitList = select("MUSEUM_EXHIBIT").whereSimple("LocX>0 AND MapId=? AND IsExhibit=?", floor.toString(), type.toString()).parseList { Exhibit(it as MutableMap<String, Any?>) }
 
         }
     }
@@ -117,7 +117,7 @@ class MapFragment : Fragment(), AnkoLogger, NumManager.OnNumChangeListener {
         tileView!!.addView(imgRoute)
         Handler().postDelayed(Runnable {
             if (tileView != null) {
-                tileView!!.slideToAndCenterWithScale((mapList.get(0).Width), (mapList.get(0).Height),if (floor==3) 1.5f else 2.0f)
+                tileView!!.slideToAndCenterWithScale((mapList.get(0).Width), (mapList.get(0).Height), if (floor == 3) 1.5f else 2.0f)
                 isStartBle = true
             }
         }, 100)
@@ -150,7 +150,7 @@ class MapFragment : Fragment(), AnkoLogger, NumManager.OnNumChangeListener {
                         .placeholder(R.mipmap.img_mark_default).error(R.mipmap.img_mark_default).into(markImg)
                 markView.tag = it.AutoNum
                 viewList.add(markView)
-                if (it.LocX != 0) {
+                if (null != it && it.LocX != 0) {
                     tileView!!.addMarker(markView, it.LocX.toDouble(), it.LocY.toDouble(), -0.5f, -1.0f)
                 }
                 if (type == 0) {
@@ -168,9 +168,12 @@ class MapFragment : Fragment(), AnkoLogger, NumManager.OnNumChangeListener {
                 var tv_Name = markView.find<TextView>(R.id.tv_device_name)
                 tv_Name.isSelected = true
                 tv_Name.text = it.Name
-                if (it.LocX != 0) {
-                    tileView!!.addMarker(markView, it.LocX.toDouble(), it.LocY.toDouble(), -0.5f, -1.0f)
+                if (it.LocX != null) {
+                    if (it.LocX != 0) {
+                        tileView!!.addMarker(markView, it.LocX.toDouble(), it.LocY.toDouble(), -0.5f, -1.0f)
+                    }
                 }
+
             }
         }
 

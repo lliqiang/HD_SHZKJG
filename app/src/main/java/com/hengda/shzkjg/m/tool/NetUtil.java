@@ -14,13 +14,10 @@ import android.net.wifi.WifiManager;
  * 描述：
  */
 public class NetUtil {
-
     private NetUtil() {
         /* cannot be instantiated */
         throw new UnsupportedOperationException("cannot be instantiated");
     }
-
-
     /**
      * 判断网络是否连接
      *
@@ -41,7 +38,6 @@ public class NetUtil {
         return false;
     }
 
-
     /**
      * 判断是否是wifi连接
      */
@@ -52,7 +48,6 @@ public class NetUtil {
             return false;
         return cm.getActiveNetworkInfo().getType() == ConnectivityManager.TYPE_WIFI;
     }
-
 
     /**
      * 获取WIFI SSID

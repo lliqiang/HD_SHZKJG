@@ -19,6 +19,8 @@ import org.jetbrains.anko.db.SelectQueryBuilder
 import org.jetbrains.anko.db.select
 import org.jetbrains.anko.startActivity
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer
+import kotlinx.android.synthetic.main.head_search_detail.*
+
 /**
  * A simple [Fragment] subclass.
  */
@@ -37,7 +39,7 @@ class ScrollFragment : Fragment() {
         // Inflate the layout for this fragment
         exhibitionList = mutableListOf<Exhibition>()
         AppConfig.database.use {
-            exhibitionList = select("EXHIBIT_ROOM ORDER BY MapId,ExhibitId").parseList { Exhibition(it as MutableMap<String, Any?>) }
+            exhibitionList = select("EXHIBIT_ROOM ORDER BY MapId,ExhibitId ").parseList { Exhibition(it as MutableMap<String, Any?>) }
         }
         return inflater!!.inflate(R.layout.fragment_scroll, container, false)
     }

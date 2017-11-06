@@ -10,6 +10,7 @@ import android.support.annotation.LayoutRes
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
@@ -26,7 +27,7 @@ class ExhibitionAdapter(layoutResId: Int, data: MutableList<Exhibition>?) : Base
 
     override fun convert(helper: BaseViewHolder?, item: Exhibition?) {
         helper!!.setText(R.id.tv_title_list, item!!.ExhibitName)
-        Glide.with(mContext).load(AppConfig.getImgExhibitionPath(item!!.MapId, item.ExhibitId)).placeholder(R.mipmap.img_list_def).into(helper!!.getView<ImageView>(R.id.iv_list))
+        Glide.with(mContext).load(AppConfig.getImgExhibitionPath(item!!.MapId, item.ExhibitId)).diskCacheStrategy(DiskCacheStrategy.NONE).placeholder(R.mipmap.img_list_def).into(helper!!.getView<ImageView>(R.id.iv_list))
     }
 
 }

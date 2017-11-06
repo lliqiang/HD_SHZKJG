@@ -19,9 +19,16 @@ import com.hengda.shzkjg.m.down.ChinesePresenter
 import com.hengda.shzkjg.m.down.LanguageContract
 import com.hengda.shzkjg.m.tool.AppUtil
 import com.hengda.shzkjg.m.tool.NetUtil
+import com.hengda.shzkjg.m.tool.SDCardUtil
 import com.hengda.shzkjg.m.tool.Utils
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.toast
+import org.jetbrains.anko.uiThread
+import rx.Observable
+import rx.Single
+import java.io.File
+import java.util.*
 
 
 /**
@@ -58,10 +65,12 @@ class SettingFragment : Fragment(), LanguageContract.View {
 
     override fun error() {
         activity.toast("下载失败")
+        progressDialog.hide()
     }
 
     override fun completed() {
         activity.toast("资源更新完成")
+        progressDialog.hide()
     }
 
     override fun connected() {
@@ -112,7 +121,16 @@ class SettingFragment : Fragment(), LanguageContract.View {
                         .setConfirmText(getString(R.string.submit))
                         .setConfirmClickListener { dialog ->
                             dialog.dismiss()
-                            mPresenter!!.checkDb()
+
+                          doAsync {
+                             while (AppConfig.isExist()){
+                                 Utils.deleteDir(AppConfig.getDefaultFileDir())
+                             }
+                              uiThread {
+                                  mPresenter!!.checkDb()
+                              }
+                          }
+
                         }
                         .setCancelText(getString(R.string.cancel))
                         .setCancelClickListener { dialog ->

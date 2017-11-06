@@ -79,7 +79,7 @@ class ScanFragment : Fragment(), OnScannerCompletionListener {
             }
             if (exhibits.size > 0) {
                 val exhibit = exhibits[0]
-                if (exhibit.AutoNum != 0) {
+                if (exhibit.IsExhibit !=1) {
                     activity.startActivity<PlayActivity>("exhibit" to exhibit)
                 } else {
                     activity.toast("您扫描的二维不存在，请选择正确的二维码扫描")

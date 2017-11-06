@@ -43,6 +43,11 @@ open class AppConfig {
             return SDCardUtil.getSDCardPath() + ".Hd_SHZBWG_res/"
         }
 
+        fun isExist(): Boolean {
+            var file = File(getDefaultFileDir());
+            return file.exists()
+        }
+
         fun getMapPath(floor: Int): String {
             return getDefaultFileDir() + "map/" + floor
         }

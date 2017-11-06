@@ -11,7 +11,7 @@
         android:layout_height="175dp"
         android:layout_centerHorizontal="true"
         android:scaleType="fitXY"
-        android:src="@mipmap/img_list_defaut" />
+       />
 
     <TextView
         android:id="@+id/tv_title_list"
@@ -21,7 +21,6 @@
         android:layout_marginTop="160dp"
         android:background="@mipmap/bg_list_title"
         android:gravity="center"
-        android:text="序厅"
         android:textColor="@color/white"
         android:textSize="18sp" />
 </RelativeLayout>

@@ -30,6 +30,7 @@ import android.provider.SyncStateContract.Helpers.update
 import android.provider.SyncStateContract.Helpers.update
 import android.view.KeyEvent
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.hengda.shzkjg.m.base.App
@@ -62,7 +63,7 @@ class PlayActivity : BasePlayerActivity(), AnkoLogger {
             val whereArgs = arrayOf(exhibit.FileNo)//
             update("MUSEUM_EXHIBIT", values, whereClause, whereArgs)
         }
-        Glide.with(this).load(AppConfig.getImgPath(exhibit.FileNo)).placeholder(R.mipmap.img_list_def).into(iv_play_detail)
+        Glide.with(this).load(AppConfig.getImgPath(exhibit.FileNo)).placeholder(R.mipmap.img_list_def).diskCacheStrategy(DiskCacheStrategy.NONE).into(iv_play_detail)
         iv_back.setOnClickListener {
             AppConfig.ISPLAY = false
             finish()
